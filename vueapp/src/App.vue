@@ -1,27 +1,32 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+    <form id="search">
+        Search <input name="query" v-model="searchQuery">
+    </form>
+    <ScheduleGrid :data="scheduleData"
+                  :columns="scheduleModel"
+                  :filter-key="searchQuery">
+    </ScheduleGrid>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+    import { defineComponent, ref } from 'vue';
+    import ScheduleGrid from './components/ScheduleGrid.vue'
+    import { useScheduleStore } from '@/store';
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-});
+    export default defineComponent({
+        name: 'App',
+        components: { ScheduleGrid },
+        setup() {
+            const scheduleStore = useScheduleStore();
+            const searchQuery = ref('')
+            const scheduleModel = ['id', 'userId', 'numberWorkPlaceId', 'fromDate', 'toDate', 'description']
+            const scheduleData = scheduleStore.fetchDefaultSchedules()
+
+            return {
+                searchQuery,
+                scheduleModel,
+                scheduleData
+            };
+        },
+    });
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
