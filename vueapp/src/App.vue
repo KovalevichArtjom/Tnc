@@ -1,15 +1,11 @@
 <template>
-    <form id="search">
-        Search <input name="query" v-model="searchQuery">
-    </form>
     <ScheduleGrid :data="scheduleData"
-                  :columns="scheduleModel"
-                  :filter-key="searchQuery">
+                  :columns="scheduleModel">
     </ScheduleGrid>
 </template>
 
 <script lang="ts">
-    import { defineComponent, ref } from 'vue';
+    import { defineComponent } from 'vue';
     import ScheduleGrid from './components/ScheduleGrid.vue'
     import { useScheduleStore } from '@/store';
 
@@ -18,12 +14,14 @@
         components: { ScheduleGrid },
         setup() {
             const scheduleStore = useScheduleStore();
-            const searchQuery = ref('')
             const scheduleModel = ['id', 'userId', 'numberWorkPlaceId', 'fromDate', 'toDate', 'description']
-            const scheduleData = scheduleStore.fetchDefaultSchedules()
+            const scheduleData = scheduleStore.fetchDefaultSchedules().then((record) => {
+                console.log(record);
+            })
+
+            console.log(scheduleData);
 
             return {
-                searchQuery,
                 scheduleModel,
                 scheduleData
             };

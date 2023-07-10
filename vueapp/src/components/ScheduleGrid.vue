@@ -1,86 +1,41 @@
 <template>
-    <table v-if="filteredData.length">
-        <thead>
-            <tr>
-                <th v-for="key in columns"
-                    @click="sortBy(key)"
-                    :class="{ active: sortKey == key }">
-                    {{ capitalize(key) }}
-                    <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'" />
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="entry in filteredData">
-                <td v-for="key in columns">
-                    {{entry[key]}}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <p v-else>No matches found.</p>
+    <thead>
+        <tr>
+            <th v-for="key in columns">
+                {{ capitalize(key) }}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-for="{ value, id } in scheduleStore" :key="id">
+            <td> {{ value.Id }} </td>
+            <td> {{ value.userId }} </td>
+            <td> {{ value.numberWorkPlaceId }} </td>
+            <td> {{ value.fromDate }} </td>
+            <td> {{ value.toDate }} </td>
+            <td> {{ value.description }} </td>
+        </tr>
+    </tbody>
 </template>
 
 <script lang="ts">
-    import { defineComponent, ref } from 'vue';
+    import { defineComponent } from 'vue';
 
     export default defineComponent({
         name: 'ScheduleGrid',
         props: {
-            data: { type: Array },
-            columns: { type: Array },
-            filterKey: { type: String }
+            data: { type: Array, required: true },
+            columns: { type: Array, required: true }
         },
         setup(props) {
-            const sortKey = ref('')
-            const sortOrders = ref(
-              props.columns.reduce((o, key) => ((o[key] = 1), o), {})
-            )
-
-                console.log('setup sortKey: ', sortKey);
-                console.log('setup sortOrders: ', sortOrders);
+            const scheduleStore = props.data
 
             return {
-                sortKey,
-                sortOrders
-            };  
-        },
-        computed: {
-            filteredData(props) {
-                let { data, filterKey } = props
-
-                console.log('filteredData sortKey: ', this.sortKey);
-                console.log('filteredData sortOrders: ', this.sortOrders);
-
-                if (filterKey) {
-                    filterKey = filterKey.toLowerCase()
-                    data = data.filter((row) => {
-                        return Object.keys(row).some((key) => {
-                            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
-                        })
-                    })
-                }
-
-                const key = this.sortKey
-                if (key) {
-                    const order = this.sortOrders.value[key]
-                    data = data.slice().sort((a, b) => {
-                        a = a[key]
-                        b = b[key]
-                        return (a === b ? 0 : a > b ? 1 : -1) * order
-                    })
-                }
-
-                
-                return data
+                scheduleStore
             }
         },
         methods: {
-            sortBy(key) {
-                this.sortKey = key
-                this.sortOrders.value[key] *= -1
-            },
-            capitalize(str) {
+            capitalize(str: string) {
                 return str.charAt(0).toUpperCase() + str.slice(1)
             }
         }

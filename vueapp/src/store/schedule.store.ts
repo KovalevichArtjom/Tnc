@@ -22,7 +22,7 @@ export const useScheduleStore = defineStore('schedule', {
     },
     actions: {
         async fetchDefaultSchedules(): Promise<Array<ISchedule>> {
-            return [
+            const records = [
                 {
                     id: 1,
                     userId: 1,
@@ -56,6 +56,8 @@ export const useScheduleStore = defineStore('schedule', {
                     description: 'Test description UserId 3'
                 }
             ]
+
+            return records;
         }
     }
 });
